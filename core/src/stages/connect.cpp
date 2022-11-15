@@ -38,9 +38,13 @@
 
 #include <moveit/task_constructor/stages/connect.h>
 #include <moveit/task_constructor/merge.h>
-#include <moveit/planning_scene/planning_scene.h>
-
+#include <moveit/task_constructor/moveit_compat.h>
 #include <moveit/task_constructor/cost_terms.h>
+
+#include <moveit/planning_scene/planning_scene.h>
+#include <moveit/trajectory_processing/time_optimal_trajectory_generation.h>
+
+using namespace trajectory_processing;
 
 namespace moveit {
 namespace task_constructor {
@@ -221,7 +225,8 @@ SubTrajectoryPtr Connect::merge(const std::vector<robot_trajectory::RobotTraject
 
 	auto jmg = merged_jmg_.get();
 	assert(jmg);
-	robot_trajectory::RobotTrajectoryPtr trajectory = task_constructor::merge(sub_trajectories, state, jmg);
+	trajectory_processing::TimeOptimalTrajectoryGeneration timing;
+	robot_trajectory::RobotTrajectoryPtr trajectory = task_constructor::merge(sub_trajectories, state, jmg, timing);
 	if (!trajectory)
 		return SubTrajectoryPtr();
 
